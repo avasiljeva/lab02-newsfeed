@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation=" 
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+	<!-- Users data loader configuration -->
+	
+	<bean id="usersImportProcessor" class="lv.lu.newsfeed.impl.load.user.UsersDataImportProcessor">		
+		<property name="userDataLoaderList">
+			<list>
+				<ref bean="mockUserDataLoader"/>
+			</list>
+		</property>
+		<property name="importActivities" value="false"/>
+		<property name="activityImportProcessor" ref="activityImportProcessor"/>
+		<property name="jpaDAO" ref="jpaDAO"/>
+		<property name="cleanDB" value="true"/>
+	</bean>
+	
+	<bean id="mockUserDataLoader" class="lv.lu.newsfeed.impl.load.user.MockUserDataLoader"/>	
+	
+	<bean id="activityImportProcessor" class="lv.lu.newsfeed.impl.load.user.activity.UserActivityImportProcessorImpl">
+		<property name="activityDataLoaderList">
+			<list>				
+				<ref bean="mockActivityLoader"/>
+				<!-- <ref bean="googlePlusActivityLoader"/> -->
+			</list>
+		</property>
+		<property name="jpaDAO" ref="jpaDAO"/>
+		<property name="feedDAO" ref="feedRedisDAO"/>
+	</bean>
+	
+	<bean id="mockActivityLoader" class="lv.lu.newsfeed.impl.load.user.activity.MockActivityDataLoader"/>
+		
+	<!-- HTTP client -->
+	<bean id="httpClient" class="lv.lu.newsfeed.impl.ApacheHTTPClient" />	
+		 
+	<!-- SQL database connection configuration -->
+	
+	<!-- Bean for common JPA DAO operations -->
+	<bean id="jpaDAO" class="lv.lu.newsfeed.impl.JpaDAOImpl"/>	     
+	               
+    <!-- Database connection properties are specified in \lab01-newsfeed\src\main\resources\META-INF\persistence.xml file -->
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="hibernate_mysql"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+	</bean>
+	
+	<bean id="transactionManager"
+		class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- Redis data storage configuration -->
+	
+	<bean id="feedRedisDAO" class="lv.lu.newsfeed.impl.redis.FeedRedisDAOImpl">
+		<property name="template" ref="redisTemplate"/>
+		<property name="maxSize" value="50"/>		
+	</bean>
+	
+	<bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+		p:host-name="localhost" p:port="6379" p:password=""/>
+
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" 
+		p:connection-factory-ref="jedisConnectionFactory">
+		<property name="keySerializer" ref="stringKeySerializer"/>
+	</bean>
+	
+	<bean id="stringKeySerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+	
+</beans>

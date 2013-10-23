@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="lab02-newsfeed" basedir="." >
+	
+	<property name="tomcat_home" value="C:\tools\apache-tomcat-7.0.29\webapps"/>
+    <property name="web_project" value="lab02-newsfeed-portal"/>
+	
+	<target name="update" description="Deletes the WAR from deploy directory and then copies new version there">
+	   <delete file="${tomcat_home}/${web_project}.war"/>
+       <copy file="./${web_project}/target/${web_project}.war" todir="${tomcat_home}"/>
+	</target>
+
+	<target name="deploy" description="Deploys the WAR copying it to the deploy directory">
+       <copy file="./${web_project}/target/${web_project}.war" todir="${tomcat_home}"/>
+	</target>
+
+	<target name="undeploy" description="Undeploys the WAR deleting it from the deploy directory">
+	   <delete file="${tomcat_home}/${web_project}.war"/>
+	</target>
+
+	<target name="clean-svn" description="Deletes Subversion directories">
+		<defaultexcludes remove="**/.svn"/>
+		<defaultexcludes remove="**/.svn/**"/>
+		<delete includeemptydirs="true">
+			<fileset dir=".">
+				<include name="**/.svn/**"/>
+			</fileset>
+		</delete>
+		<defaultexcludes default="true"/>
+	</target>
+	
+	<target name="submit" description="Create a ZIP file ready for submission">
+		<delete dir="target/submit" failonerror="false"/>
+		<mkdir dir="target/submit"/>
+		<copy todir="target/submit">
+			<fileset dir="." includes="**/*"
+				excludes="**/selenium-core/**,.settings/**,target/**,bin/**,.*,**/*.jar,**/*.zip,**/*.log">
+			</fileset>
+		</copy>
+		<zip destfile="target/lab02-newsfeed.zip">
+			<fileset dir="target/submit"/>
+		</zip>
+	</target>
+</project>

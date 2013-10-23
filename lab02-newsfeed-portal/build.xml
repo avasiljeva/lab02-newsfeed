@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="lab02-newsfeed-portal" basedir="." >
+	<target name="clean-svn" description="Deletes Subversion directories">
+		<defaultexcludes remove="**/.svn"/>
+		<defaultexcludes remove="**/.svn/**"/>
+		<delete includeemptydirs="true">
+			<fileset dir=".">
+				<include name="**/.svn/**"/>
+			</fileset>
+		</delete>
+		<defaultexcludes default="true"/>
+	</target>
+</project>

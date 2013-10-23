@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+  <parent>
+    <groupId>lv.lu.newsfeed</groupId>
+    <artifactId>lab02-newsfeed</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>lv.lu.newsfeed.portal</groupId>
+  <artifactId>lab02-newsfeed-portal</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>lab02-newsfeed-portal</name>
+  <url>http://www.ante.lv/xwiki/bin/view/TrainingWebProgrammingMasters2012</url>
+  
+  <dependencies>
+  
+	<!-- Dependency on 'lab02-newsfeed-core' project-->
+    <dependency>
+      <groupId>lv.lu.newsfeed.core</groupId>
+      <artifactId>lab02-newsfeed-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>  
+  
+  	<!-- Java EE -->	
+	<dependency>
+	  <groupId>taglibs</groupId>
+	  <artifactId>standard</artifactId>
+	  <version>1.1.2</version>
+	</dependency>
+	<dependency>
+	   <groupId>javax.servlet</groupId>
+	   <artifactId>jstl</artifactId>
+	   <version>1.1.2</version>
+	</dependency>
+	
+	<!-- File upload -->
+	<dependency>
+		<groupId>commons-fileupload</groupId>
+		<artifactId>commons-fileupload</artifactId>
+		<version>1.2.2</version>
+	</dependency>
+	<dependency>
+		<groupId>commons-io</groupId>
+		<artifactId>commons-io</artifactId>
+		<version>2.4</version>
+	</dependency>
+
+  </dependencies>
+
+  <build>
+    <finalName>lab02-newsfeed-portal</finalName>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>1.6</source>
+                <target>1.6</target>
+            </configuration>
+        </plugin>
+		<plugin>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-maven-plugin</artifactId>			
+            <version>8.1.7.v20120910</version>
+			<configuration>				
+				<connectors>
+					<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
+						<port>8080</port>
+					</connector>
+				</connectors>				
+    		    <scanIntervalSeconds>5</scanIntervalSeconds>
+    		    <webApp>
+					<contextPath>/lab02-newsfeed-portal</contextPath>
+    		    </webApp>
+  		   </configuration>
+        </plugin>
+    </plugins>
+  </build>
+</project>

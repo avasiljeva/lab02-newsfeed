@@ -1,0 +1,193 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>lv.lu.newsfeed</groupId>
+    <artifactId>lab02-newsfeed</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>lv.lu.newsfeed.core</groupId>
+  <artifactId>lab02-newsfeed-core</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>lab02-newsfeed-core</name>
+  <url>http://ante.lv/xwiki/bin/view/TrainingWebProgrammingMasters2012/NewsFeedPortal</url>
+
+  <properties>
+  	<org.springframework.version>3.1.3.RELEASE</org.springframework.version>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+  		<!-- Spring Framework -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${org.springframework.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${org.springframework.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${org.springframework.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>				
+   		<dependency>
+   			<groupId>org.springframework</groupId>
+   			<artifactId>spring-webmvc</artifactId>
+   			<version>${org.springframework.version}</version>
+   			<type>jar</type>
+   			<scope>compile</scope>
+   		</dependency>
+   		<dependency>
+   			<groupId>org.springframework</groupId>
+   			<artifactId>spring-web</artifactId>
+   			<version>${org.springframework.version}</version>
+   			<type>jar</type>
+   			<scope>compile</scope>
+   		</dependency>
+		<dependency>
+			<groupId>org.springframework.data </groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>1.0.1.RELEASE</version>
+			<type>jar</type>
+   			<scope>compile</scope>
+		</dependency>
+
+		<!-- Java EE -->  		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+		</dependency>		
+		
+		<!-- Persistence -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.1.5.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>4.1.5.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<version>1.0.1.Final</version>
+		</dependency>
+		
+        		<!-- Database access -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.21</version>
+		</dependency>
+			
+		<!-- Logging -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.2</version>
+		</dependency>	
+		
+		<!-- JUnit testing -->
+		<dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+		<dependency>
+	       <groupId>org.hsqldb</groupId>
+	       <artifactId>hsqldb</artifactId>
+	       <version>2.2.8</version>
+	       <scope>test</scope>
+        </dependency>
+
+		<!-- HttpUnit-->		
+		<dependency>
+			<groupId>httpunit</groupId>
+			<artifactId>httpunit</artifactId>
+			<version>1.7</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>jtidy</artifactId>
+					<groupId>jtidy</groupId>
+				</exclusion>			
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>nekohtml</groupId>
+			<artifactId>nekohtml</artifactId>
+			<version>1.9.6.2</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		<dependency>
+			<groupId>rhino</groupId>
+			<artifactId>js</artifactId>
+			<version>1.7R2</version>
+			<scope>test</scope>			
+		</dependency>	
+  </dependencies>
+  
+  <build>
+		<plugins>
+			<plugin>
+				<!-- Make sure your JAVA_HOME points to Java 1.7 -->
+				<!-- Otherwise you may have an error when executing Maven commands: javac: invalid target release: 1.7 -->	
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>jboss-public-repository-group</id>
+			<name>JBoss Public Repository Group</name>
+			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+</project>

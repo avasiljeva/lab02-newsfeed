@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Spring Web application configuration file -->
+
+<beans xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+    <!-- Support for annotation-based Spring Web MVC controllers configuration -->
+    <context:component-scan base-package="lv.lu.newsfeed.portal.mvc.controller"/>
+    
+    <!-- Spring Web MVC components -->    
+	
+	<!-- Validator for LoginLogoutController -->
+	<bean name="loginValidator" class="lv.lu.newsfeed.portal.mvc.validator.LoginValidator"></bean>
+	
+	<!-- Validator for RegistrationController -->
+	<bean name="registrationValidator" class="lv.lu.newsfeed.portal.mvc.validator.RegistrationValidator"></bean>
+
+	<!-- URL mappings to controllers -->
+
+	<!-- Mapping for controllers defined in XML only -->
+    <bean id="urlMappingA" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order" value="0"/>
+		<property name="interceptors">
+            <list>
+                <ref bean="loginInterceptor"/>
+            </list>
+        </property>
+		<property name="mappings">
+			<props>
+				<prop key="/home">homePageController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- Mapping for annotation-based Spring Web MVC controllers configuration -->
+	<bean id="urlMappingB" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+   		<property name="order" value="1"/>
+   		<property name="interceptors">
+            <list>
+                <ref bean="loginInterceptor"/>
+            </list>
+        </property>
+	</bean>
+	
+	<!-- Interceptors -->
+
+	<!-- Handles unauthorized access attempts -->
+	<bean id="loginInterceptor" class="lv.lu.newsfeed.portal.mvc.interceptor.LoginInterceptor">
+		<property name="ignoreList">
+			<list>
+				<value>/home</value>
+				<value>/login</value>
+				<value>/register</value>
+			</list>
+		</property>
+	</bean>	
+	
+	<!-- View resolvers -->
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix">
+            <value>/WEB-INF/jsp/</value>
+        </property>
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
+    
+    <!-- File upload -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    	<property name="maxUploadSize" value="-1"/>
+	</bean>
+    
+    <!-- Application services -->
+    
+    <bean id="jpaDAO" class="lv.lu.newsfeed.impl.JpaDAOImpl" />
+    <bean id="userService" class="lv.lu.newsfeed.impl.service.UserServiceImpl"/>
+
+   	<!-- Persistence configuration -->
+
+    <bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="hibernate_mysql"/>
+		<property name="jpaVendorAdapter">
+		    <!-- Hibernate properties are specified in persistence.xml file -->
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- Redis data storage configuration -->
+	
+	<bean id="feedRedisDAO" class="lv.lu.newsfeed.impl.redis.FeedRedisDAOImpl">
+		<property name="template" ref="redisTemplate"/>
+		<property name="maxSize" value="50"/>		
+	</bean>
+	
+	<bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+		p:host-name="localhost" p:port="6379" p:password=""/>
+
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" 
+		p:connection-factory-ref="jedisConnectionFactory">
+		<property name="keySerializer" ref="stringKeySerializer"/>
+	</bean>
+	
+	<bean id="stringKeySerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+
+</beans>
